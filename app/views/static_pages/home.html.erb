@@ -1,8 +1,9 @@
 <% provide(:title , 'Home') %> 
+<div class="center hero-unit">
+	<h1>Sample App</h1>
+	<h2> This is the home page for Ruby on Rails course </h2>
 
-<h1>Sample App</h1>
-<p>
-  This is the home page for wikipedia 
-  <a href="http://es.wikipedia.org"> Wikipedia </a>
-  Sample application 
-</p>
+  <%= link_to "Sign Up" , '#' , class: "btn btn-large btn-primary" %> 
+</div>
+
+<%= link_to image_tag("rails.png" , alt: "Rails") , 'http://rubyonrails.org/' %> 
