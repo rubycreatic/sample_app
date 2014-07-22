@@ -1,71 +1,64 @@
 require 'rails_helper'
-=begin 
+
 describe Micropost do
 
   let(:user) { FactoryGirl.create(:user) }
+  let(:user_b) {FactoryGirl.create(:user)}
 
-  describe "valid content and user micropost" do 
+  before do
+    @micropost = user.microposts.build(content: "Lorem ipsum")
+  end
+
+  describe "micropost fields" do 
   
-    before do
-      @micropost = user.microposts.build(content: "Lorem ipsum")
-    end
-
-    it "should have a valid content" do 
+    it "should have a content field" do 
     	expect(@micropost).to respond_to(:content)
     end 
 
-    it "should have a valid user" do 
-    	expect(@micropost).to respond_to(:user)
-    end 
-
-    it "should have a valid user_id" do 
+    it "should have a user_id field" do 
     	expect(@micropost).to respond_to(:user_id)
     end 
 
-    describe "with blank content" do
-      before { @micropost.content = " " }
-      it "should not be valid" do 
-        expect(@micropost).to_not be_valid
-      end 
-    end
-
-    describe "with content that is too long" do
-      before { @micropost.content = "a" * 141 }
-      it "should not be valid" do
-        expect(@micropost).to_not be_valid  
-      end  
-    end
+    it "should belongs to user" do 
+      expect(@micropost).to respond_to(:user)
+    end 
+  
+  end 
 
 
-    describe "when user_id is not present" do
-     
-      before { @micropost.user_id = nil }
+  describe "The presence of a user relation with a micropost" do
+   
+    before { @micropost.user_id = nil }
 
-      it "should not be valid" do 
-      	expect(@micropost).to_not be_valid 
-      end 
+    it "is invalid without a user_id" do 
+      expect(@micropost).to_not be_valid 
+    end 
+  
+  end
+
+
+  describe "order of microposts to display in  screen" do 
     
+    before { user_b.save }
+
+    let!(:older_micropost) do
+      FactoryGirl.create(:micropost, user: user_b, created_at: 1.day.ago)
+    end
+    
+    let!(:newer_micropost) do
+      FactoryGirl.create(:micropost, user: user_b, created_at: 1.hour.ago)
+    end
+
+    it "is valid when micropost order is newest first" do
+      expect(user_b.microposts.to_a).to eq [newer_micropost, older_micropost]
     end
 
   end 
 
-  describe "micropost associations" do 
-    before { user.save }
 
-    let!(:older_micropost) do
-      FactoryGirl.create(:micropost, user: user, created_at: 1.day.ago)
-    end
-    
-    let!(:newer_micropost) do
-      FactoryGirl.create(:micropost, user: user, created_at: 1.hour.ago)
-    end
+  describe "destroys  user also destroys micropost" do 
 
-    it "should have the right microposts in the right order" do
-      expect(user.microposts.to_a).to eq [newer_micropost, older_micropost]
-    end
-
-
-    it "should destroy associated microposts" do
+    it " is valid when both user and the micropost are destroyed" do
       microposts = user.microposts.to_a
       user.destroy
       expect(microposts).not_to be_empty
@@ -76,8 +69,25 @@ describe Micropost do
 
   end 
 
+  describe "presence validation and length validation" do 
+
+    describe "the presence of the content" do
+      before { @micropost.content = " " }
+      it "is invalid when the content is empty" do 
+        expect(@micropost).to_not be_valid
+      end 
+    end
+
+    describe "the length of the content" do
+      before { @micropost.content = "a" * 141 }
+      it "it is invalid when the content is too long" do
+        expect(@micropost).to_not be_valid  
+      end  
+    end
+
+  end 
 
 
 
 end
-=end 
+
