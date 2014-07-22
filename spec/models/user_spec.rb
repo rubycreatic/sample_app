@@ -4,98 +4,82 @@ require 'rails_helper'
 
 		before { @user = User.new(name: "Example User" , email: "user@example.com" , password: "hola_mundo" , password_confirmation: "hola_mundo")}
 
-		describe "User fields" do 
+		describe "user fields" do 
 
-    		it "should have valid name" do 
+    		it "should have a name field" do 
           		expect(@user).to respond_to(:name)
         	end 
 
-        	it "should have valid email" do 
+        	it "should have a email field" do 
           		expect(@user).to respond_to(:email)
         	end 
 
-            it "should have valid password" do 
+            it "should have a password field" do 
                 expect(@user).to respond_to(:password_digest)
             end 
 
-            it "should have a valid password confirmation" do 
+            it "should have a password confirmation field" do 
                 expect(@user).to respond_to(:password_confirmation)
             end 
 
         end 
 
-        describe "The presence of the field name" do 
-        
-        	before{@user.name = ""}
-        	
-        	it "should be false" do 
-        		expect(@user).to_not be_valid
-        	end
-        
+
+        describe "The presence validation" do 
+
+            describe "the presence of the name" do 
+            
+                before{@user.name = ""}
+                
+                it "is invalid without a name" do 
+                    expect(@user).to_not be_valid
+                end
+            
+            end 
+  
+             describe "the presence of the email" do
+
+                before{@user.email = ""}
+
+                it "is invalid without an email" do 
+                    expect(@user).to_not be_valid
+                end 
+
+            end   
+
+
+            describe "the presence of the password " do 
+            
+                before do 
+                    @user.password = ""
+                    @user.password_confirmation = ""
+                end 
+
+                it "is invalid when the password field is not present" do 
+                    expect(@user).to_not be_valid  
+                end 
+    
+             end             
+
         end 
 
 
-        describe "The presence of the field email" do
-
-        	before{@user.email = ""}
-
-        	it "should be false" do 
-        		expect(@user).to_not be_valid
-        	end 
-
-        end 
-
-        describe "when the name is too long" do 
+        describe "the length validation of the name " do 
 
         	before{@user.name = "a" * 51}
 
-        	it "should be false" do 
+        	it "is invalid when the name is too long" do 
         		expect(@user).to_not be_valid 
         	end 
 
         end 
 
-        describe "valid email format" do 
 
-    		before{@user.email = "email@example..com" }
-
-        	it "should be true" do 
-        		expect(@user).to be_valid
-        	end 
-
-        end 
-
-
-        describe "when the email address is already taken" do 
-        	before do 
-        		user_with_same_email = @user.dup
-        		user_with_same_email.save 
-        	end 
-
-        	it "should be false" do 
-    				expect(@user).to_not be_valid  
-        	end 
-	
-        end 
-
-
-        describe "when the password field is not present" do 
-            before do 
-                @user.password = ""
-                @user.password_confirmation = ""
-            end 
-
-            it "should not be valid" do 
-                expect(@user).to_not be_valid  
-            end 
-    
-        end 
-
-
-        describe "validates password length" do 
+        describe "the length validation of the password" do 
 
             before { @user.password = @user.password_confirmation = "a" * 5 }
-            it  "should not be valid" do 
+            
+            it  "is invalid when the password is too short" do 
                 expect(@user).to_not be_valid
             end 
 
@@ -103,24 +87,48 @@ require 'rails_helper'
 
 
 
+        describe "the format validation of the email" do 
+
+    		before{@user.email = "email@example..com" }
+
+        	it "is valid when the format is correct" do 
+        		expect(@user).to be_valid
+        	end 
+
+        end 
+
+
+        describe "the uniqueness validation of the email" do 
+        	before do 
+        		user_with_same_email = @user.dup
+        		user_with_same_email.save 
+        	end 
+
+        	it "is invalid when the email address is already taken" do 
+    				expect(@user).to_not be_valid  
+        	end 
+	
+        end 
+
 
         describe "validates user authenticate methods" do
 
             before { @user.save }
+
             let(:found_user) { User.find_by(email: @user.email) }
 
-            describe "the user has a  valid password" do
+            describe "the login" do
 
-                it "should  be  valid" do 
+                it "is valid when the user has a valid password" do 
                     expect(@user).to eq(found_user.authenticate(@user.password))
                 end
             end 
 
-            describe "the user does not have a valid password" do
+            describe "the login" do
             
                 let(:user_for_invalid_password) { found_user.authenticate("invalid") }
 
-                it "should not be valid" do 
+                it "is invalid when the user does not have a valid password" do 
                     expect(@user).to_not eq(user_for_invalid_password)
                     
                 end 
