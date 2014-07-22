@@ -1,3 +1,4 @@
 --color
---warnings
+clear
+
 --require spec_helper
