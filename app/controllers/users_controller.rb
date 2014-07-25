@@ -19,6 +19,31 @@ class UsersController < ApplicationController
   	end 
   end 
 
+  def edit 
+    @user = User.find(params[:id])
+  end 
+
+  def update 
+    @user = User.find(params[:id])
+    if @user.update_attributes(user_params)
+      flash[:success] = "Profile updated"
+      redirect_to @user
+    else
+      render 'edit' 
+    end 
+  end 
+
+  def index
+    @users = User.paginate(page: params[:page])
+  end 
+
+
+  def destroy 
+    User.find(params[:id]).destroy
+    flash[:success] = "User successfully deleted..."
+    redirect_to users_url
+  end 
+
   private 
 
   	def user_params

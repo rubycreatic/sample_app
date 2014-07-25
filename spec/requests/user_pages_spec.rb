@@ -4,7 +4,7 @@ describe "User pages" do
 	describe "signup page" do 
 		before { visit new_user_path }
 
-		it "should have the title" do 
+		it "should have the title 'sign up'" do 
       		expect(page).to have_title(full_title('Sign up'))
     	end 
 
@@ -61,7 +61,103 @@ describe "User pages" do
 
 		end 
 
-
 	end 
+
+
+  describe "edit page" do
+    let(:user) { FactoryGirl.create(:user) }
+    before { visit edit_user_path(user) }
+
+    describe "page information" do
+
+      it "should have the content" do 
+      	expect(page).to have_content("Update your profile")
+      end 
+  
+      it "should  have the title" do 
+      	expect(page).to have_title(full_title("Edit user"))
+      end
+
+      it "should have the link to change image profile" do
+      	expect(page).to have_link('change image' , href: 'http://gravatar.com/emails')
+      end  
+    end
+
+    describe "with invalid information" do
+      before { click_button "Save changes" }
+
+      it "should not edit an user" do 
+       expect(page).to have_content('error')
+      end 
+    end
+
+
+    describe "with valid information" do 
+    	let(:new_name) { "nuevo_nombre"}
+    	let(:new_email) { "nuevo@example.com" }
+
+    	before do 
+
+    		fill_in "Name" , with: new_name
+    		fill_in "Email" , with: new_email 
+    		fill_in "Password" , with: user.password 
+    		fill_in "Confirm Password" , with: user.password
+    		click_button "Save changes"
+    	end 
+
+    	it "should have a selector 'successs'" do 
+    		expect(page).to have_selector('div.alert.alert-success')
+    	end 
+
+    end 
+
+  end
+
+
+  describe "index Page" do 
+
+  	describe "index page content" do 
+
+  		before do 
+  			FactoryGirl.create(:user , name: "Bob" , email: "bob@example.com")
+  			FactoryGirl.create(:user , name: "Ben" , email: "ben@example.com")
+  			visit users_path
+  		end 
+
+  		it "should have the title 'All users'" do  
+  			expect(page).to have_title(full_title("All users"))	
+  		end 
+
+  		it "should have the content 'All users'" do 
+  			expect(page).to have_content('All users')
+  		end 
+
+  		it "should list each user" do 
+  			User.all.each do |user|
+  				expect(page).to have_selector('li' , text: user.name)
+  			end
+  		end 
+  	
+  	end 
+  end 
+
+
+  describe "delete users" do 
+
+    before do 
+      FactoryGirl.create(:user) 
+      visit users_path
+    end
+
+    it "should have the link 'delete'" do 
+      expect(page).to have_link('delete' , href: user_path(User.first))
+    end 
+
+    it "should be able to delete another user" do 
+      expect do 
+        click_link('delete' , match: :first)
+      end.to change(User , :count).by(-1)
+    end 
+  end 
 
 end 
