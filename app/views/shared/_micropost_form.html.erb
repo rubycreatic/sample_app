@@ -1,0 +1,15 @@
+<%= form_for @micropost , :url => microposts_path( @micropost)  do |f| %>
+  	
+  <%= render 'shared/error_messages', object: f.object %>
+  
+  <div class="field">
+    <%= f.text_area :content, placeholder: "Compose new micropost..." %>
+  </div>
+
+  <div class="field">
+    <%= f.hidden_field :user_id , value: params[:id] %>
+  </div>
+
+  <%= f.submit "Post", class: "btn btn-large btn-primary" %>
+
+<% end %>

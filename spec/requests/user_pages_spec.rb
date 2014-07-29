@@ -160,4 +160,42 @@ describe "User pages" do
     end 
   end 
 
+
+  ######## test to micropost ############
+
+
+  describe "profile page with micropost" do
+
+    let(:user) { FactoryGirl.create(:user) }
+    let!(:m1) { FactoryGirl.create(:micropost, user: user , content: "Hola mundo") }
+    let!(:m2) { FactoryGirl.create(:micropost , user: user , content: "Segundo post") }
+
+
+    before {visit user_path(user)}
+
+    
+    it "should have the user name" do 
+      expect(page).to have_content(user.name)
+    end 
+
+    describe "micropost fields" do
+      it " first micropost should have a content" do 
+        expect(page).to have_content(m1.content)
+      end
+
+      it "second micropost should have  a content" do 
+        expect(page).to have_content(m2.content)
+      end 
+
+      it "should have two micropost" do 
+        expect(page).to have_content(user.microposts.count)
+      end 
+    end
+
+
+  end
+
+
+
+
 end 
