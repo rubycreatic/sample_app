@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
 
+  devise_for :users
+ 
   root 'static_pages#home'
 
   #match '/signup' , to: "users#new", via: 'get'
@@ -11,7 +13,7 @@ Rails.application.routes.draw do
   match '/contact' , to: 'static_pages#contact' , via: 'get'
 
 
-  resources :users
+  resources :users , only:[:show , :index ]
   resources :microposts , only: [:create , :destroy]
 
   

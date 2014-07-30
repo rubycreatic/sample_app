@@ -54,6 +54,7 @@ gem 'will_paginate' , '3.0.4'
 
 gem 'bootstrap-will_paginate'
 
+gem 'devise'
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 

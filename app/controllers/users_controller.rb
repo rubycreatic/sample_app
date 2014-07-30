@@ -1,15 +1,16 @@
 class UsersController < ApplicationController
-  
+=begin
   def new
   	@user = User.new 
   end
+=end 
 
   def show 
   	@user =User.find(params[:id])
     @micropost = @user.microposts.build
     @microposts = @user.microposts.paginate(page: params[:page])
   end 
-
+=begin 
   def create 
   	@user = User.new(user_params)
 
@@ -34,12 +35,13 @@ class UsersController < ApplicationController
       render 'edit' 
     end 
   end 
+=end 
 
   def index
     @users = User.paginate(page: params[:page])
   end 
 
-
+=begin 
   def destroy 
     User.find(params[:id]).destroy
     flash[:success] = "User successfully deleted..."
@@ -49,8 +51,8 @@ class UsersController < ApplicationController
   private 
 
   	def user_params
-  		params.require(:user).permit(:name, :email, :password,:password_confirmation)
+  		params.require(:user).permit(:name, :email, :password ,:password_confirmation)
   	end
-
+=end 
 
 end
