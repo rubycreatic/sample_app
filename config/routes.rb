@@ -14,7 +14,7 @@ Rails.application.routes.draw do
 
 
   resources :users , only:[:show , :index ]
-  resources :microposts , only: [:create , :destroy]
+  resources :microposts , only: [:create , :destroy , :index]
 
   
   # The priority is based upon order of creation: first created -> highest priority.

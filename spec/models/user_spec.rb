@@ -15,7 +15,7 @@ require 'rails_helper'
         	end 
 
             it "should have a password field" do 
-                expect(@user).to respond_to(:password_digest)
+                expect(@user).to respond_to(:password)
             end 
 
             it "should have a password confirmation field" do 
@@ -109,32 +109,5 @@ require 'rails_helper'
         	end 
 	
         end 
-
-
-        describe "validates user authenticate methods" do
-
-            before { @user.save }
-
-            let(:found_user) { User.find_by(email: @user.email) }
-
-            describe "the login" do
-
-                it "is valid when the user has a valid password" do 
-                    expect(@user).to eq(found_user.authenticate(@user.password))
-                end
-            end 
-
-            describe "the login" do
-            
-                let(:user_for_invalid_password) { found_user.authenticate("invalid") }
-
-                it "is invalid when the user does not have a valid password" do 
-                    expect(@user).to_not eq(user_for_invalid_password)
-                    
-                end 
-            end
-
-        end
-
 
 	end 

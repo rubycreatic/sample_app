@@ -1,10 +1,11 @@
+include Warden::Test::Helpers
 require 'rails_helper'
 
 describe "User pages" do 
 	describe "signup page" do 
-		before { visit new_user_path }
+		before { visit new_user_registration_path}
 
-		it "should have the title 'sign up'" do 
+		it "should have the title 'Sign up'" do 
       		expect(page).to have_title(full_title('Sign up'))
     	end 
 
@@ -17,8 +18,12 @@ describe "User pages" do
 	describe "profile page" do 
 
 		let(:user) {FactoryGirl.create(:user)}
-		before {visit user_path(user)}
 
+    before do 
+    login_as(user, :scope => :user)
+    visit user_path(user)
+    end
+		
 		it "should have the content 'user.name'"  do
 			expect(page).to have_content(user.name)
 		end 
@@ -31,9 +36,9 @@ describe "User pages" do
 
 	describe "sign up proccess" do 
 
-		before { visit new_user_path }
+		before { visit new_user_registration_path }
 
-		let(:submit){"Create my account"}
+		let(:submit){"Sign up"}
 
 		describe "with invalid information" do 
 
@@ -51,8 +56,8 @@ describe "User pages" do
 
 				fill_in "Name" , with: "Andres"
 				fill_in "Email" , with: "andres@example.com"
-				fill_in "Password" , with: "andres1"
-				fill_in "Confirmation" , with: "andres1"
+				fill_in "Password" , with: "andres11"
+				fill_in "Password confirmation" , with: "andres11"
 			end 
 
 			it "should create an user" do 
@@ -66,25 +71,26 @@ describe "User pages" do
 
   describe "edit page" do
     let(:user) { FactoryGirl.create(:user) }
-    before { visit edit_user_path(user) }
+    
+    before do
+     login_as(user, :scope => :user)
+     visit edit_user_registration_path 
+    end 
 
     describe "page information" do
 
       it "should have the content" do 
-      	expect(page).to have_content("Update your profile")
+      	expect(page).to have_content("Edit")
       end 
   
       it "should  have the title" do 
       	expect(page).to have_title(full_title("Edit user"))
       end
 
-      it "should have the link to change image profile" do
-      	expect(page).to have_link('change image' , href: 'http://gravatar.com/emails')
-      end  
     end
 
     describe "with invalid information" do
-      before { click_button "Save changes" }
+      before { click_button "Update" }
 
       it "should not edit an user" do 
        expect(page).to have_content('error')
@@ -100,9 +106,8 @@ describe "User pages" do
 
     		fill_in "Name" , with: new_name
     		fill_in "Email" , with: new_email 
-    		fill_in "Password" , with: user.password 
-    		fill_in "Confirm Password" , with: user.password
-    		click_button "Save changes"
+    		fill_in "Current password" , with: user.password 
+    		click_button "Update"
     	end 
 
     	it "should have a selector 'successs'" do 
@@ -114,13 +119,16 @@ describe "User pages" do
   end
 
 
-  describe "index Page" do 
+  describe "index page" do 
 
   	describe "index page content" do 
+
+      let(:userlog) { FactoryGirl.create(:user) }
 
   		before do 
   			FactoryGirl.create(:user , name: "Bob" , email: "bob@example.com")
   			FactoryGirl.create(:user , name: "Ben" , email: "ben@example.com")
+        login_as(userlog, :scope => :user)
   			visit users_path
   		end 
 
@@ -134,8 +142,10 @@ describe "User pages" do
 
   		it "should list each user" do 
   			User.all.each do |user|
-  				expect(page).to have_selector('li' , text: user.name)
-  			end
+          if userlog != user 
+  				  expect(page).to have_selector('li' , text: user.name)
+  			  end 
+        end
   		end 
   	
   	end 
@@ -144,20 +154,21 @@ describe "User pages" do
 
   describe "delete users" do 
 
-    before do 
-      FactoryGirl.create(:user) 
-      visit users_path
-    end
-
-    it "should have the link 'delete'" do 
-      expect(page).to have_link('delete' , href: user_path(User.first))
+    let(:user) { FactoryGirl.create(:user) }
+    
+    before do
+     login_as(user, :scope => :user)
+     visit edit_user_registration_path 
     end 
 
-    it "should be able to delete another user" do 
-      expect do 
-        click_link('delete' , match: :first)
-      end.to change(User , :count).by(-1)
+    it "should have the button 'delete'" do 
+      click_button "Cancel my account"
     end 
+
+    it "should delete a user" do 
+      expect { click_button "Cancel my account"}.to change(User , :count).by(-1)
+    end 
+
   end 
 
 
@@ -170,8 +181,10 @@ describe "User pages" do
     let!(:m1) { FactoryGirl.create(:micropost, user: user , content: "Hola mundo") }
     let!(:m2) { FactoryGirl.create(:micropost , user: user , content: "Segundo post") }
 
-
-    before {visit user_path(user)}
+    before do
+     login_as(user, :scope => :user)
+     visit user_path(user) 
+    end 
 
     
     it "should have the user name" do 

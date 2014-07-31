@@ -1,0 +1,20 @@
+<% provide(:title, 'Microposts') %>
+<h1>Microposts</h1>
+
+<div class="span12">
+	<ol class="microposts">
+		<% @microposts.each do |micropost| %> 
+			<li>
+				<span class="content"><%= micropost.content%></span>
+				<span class="timestamp">
+					Posted <%= time_ago_in_words(micropost.created_at) %> ago. 
+				</span>
+				<span class="timestamp">
+					<%= link_to "by #{micropost.user.name}" , user_path(micropost.user.id) %>  
+				</span>
+    		</li>
+		<%end%>
+	</ol>
+	<%= will_paginate @microposts %> 	 
+</div>
+

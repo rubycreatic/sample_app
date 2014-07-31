@@ -22,9 +22,9 @@ ActiveRecord::Schema.define(version: 20140729220800) do
 
   create_table "users", force: true do |t|
     t.string   "name"
+    t.string   "email",                  default: "", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "email",                  default: "", null: false
     t.string   "encrypted_password",     default: "", null: false
     t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"

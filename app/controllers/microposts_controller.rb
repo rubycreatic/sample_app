@@ -1,12 +1,23 @@
 class MicropostsController < ApplicationController 
 
+  before_action :authenticate_user! 
+  before_action :validate_user 
+
+	def validate_user
+    	@user = current_user 
+  	end
+
+	def index
+		@microposts = Micropost.all.paginate(page: params[:page]) 
+	end 
+
+
 	def create 
-		@user = User.find(params[:micropost][:user_id])
 		@micropost = @user.microposts.build(micropost_params)
 		if @micropost.save
-			flash[:success] = "Micropost created"
+			flash[:notice] = "Micropost created"
 		else 
-			flash[:danger] = "Error to create micropost"	
+			flash[:notice] = "Error to create micropost"	
 
 		end		
 
@@ -18,7 +29,7 @@ class MicropostsController < ApplicationController
 
 		@micropost = Micropost.find(params[:id])
 		@micropost.destroy
-    	redirect_to root_path
+    	redirect_to user_path(@user)
 	end 
 
 

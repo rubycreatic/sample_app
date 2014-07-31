@@ -12,4 +12,9 @@ module ApplicationHelper
   
   end 
 
+
+  def allow_manage?(user_show)
+  	current_user == user_show
+  end 
+
 end

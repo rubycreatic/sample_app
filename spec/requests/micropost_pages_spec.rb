@@ -1,10 +1,14 @@
+include Warden::Test::Helpers
 require 'rails_helper'
 
 	describe "Micropost pages" do 
 
 		let(:user) { FactoryGirl.create(:user) }
-
-		before {visit user_path(user)}
+		
+		before do 
+		login_as(user, :scope => :user)
+		visit user_path(user)
+		end
 
 		describe "Micropost creation" do 
 
@@ -18,7 +22,7 @@ require 'rails_helper'
 					before {click_button "Post"}
 
 					it "should have the error message" do 
-						expect(page).to have_content('error')
+						expect(page).to have_content('Error')
 					end
 
 				end 
@@ -43,7 +47,7 @@ require 'rails_helper'
 	   		before { FactoryGirl.create(:micropost, user: user) }
 
 	      	it "should delete a micropost" do
-	        	expect { click_link "delete" }.to change(Micropost, :count).by(-1)
+	      		expect { click_link "Delete post"}.to change(Micropost , :count).by(-1)
 	      	end
 	    end
 	  
