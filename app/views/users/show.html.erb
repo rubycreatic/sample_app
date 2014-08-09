@@ -9,13 +9,6 @@
 				</h1>
 			</section> 
 		</aside>
-		<% if allow_manage?(@user_show) %>
-		<div class="span8">
-			<section class="col-md-12 text-right">
-				<%= link_to "Manage Account", edit_user_registration_path , class: "btn btn-default" %>
-			</section> 
-		</div>
-		<% end %> 
 	</div>
 	<div class="row">
 		<% if allow_manage?(@user_show) %>
